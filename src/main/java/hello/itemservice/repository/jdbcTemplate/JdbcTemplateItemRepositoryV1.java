@@ -4,6 +4,7 @@ import hello.itemservice.domain.Item;
 import hello.itemservice.repository.ItemRepository;
 import hello.itemservice.repository.ItemSearchCond;
 import hello.itemservice.repository.ItemUpdateDto;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -57,8 +58,12 @@ public class JdbcTemplateItemRepositoryV1 implements ItemRepository {
     @Override
     public Optional<Item> findById(Long id) {
         String sql = "select id, item_name, price, quantity where id = ?";
-        Item item = jdbcTemplate.queryForObject(sql, itemRowMapper(), id);
-        return Optional.empty();
+        try {
+            Item item = jdbcTemplate.queryForObject(sql, itemRowMapper(), id);
+            return Optional.of(item);
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
     }
 
     private RowMapper<Item> itemRowMapper() {
