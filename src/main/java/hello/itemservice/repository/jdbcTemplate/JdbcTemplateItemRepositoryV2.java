@@ -6,6 +6,7 @@ import hello.itemservice.repository.ItemSearchCond;
 import hello.itemservice.repository.ItemUpdateDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -76,6 +77,8 @@ public class JdbcTemplateItemRepositoryV2 implements ItemRepository {
         String itemName = cond.getItemName();
         Integer maxPrice = cond.getMaxPrice();
 
+        BeanPropertySqlParameterSource param = new BeanPropertySqlParameterSource(cond);
+
         String sql = "select id, item_name, price, quantity from item";
 
         // 동적으로 쿼리를 작성하는 부분
@@ -83,32 +86,22 @@ public class JdbcTemplateItemRepositoryV2 implements ItemRepository {
             sql += " where";
         }
         boolean andFlag = false;
-        List<Object> param = new ArrayList<>();
         if (StringUtils.hasText(itemName)) {
-            sql += " item_name like concat('%',?,'%')";
-            param.add(itemName);
+            sql += " item_name like concat('%',:itemName,'%')";
             andFlag = true;
         }
         if (maxPrice != null) {
             if (andFlag) {
                 sql += " and";
             }
-            sql += " price <= ?";
-            param.add(maxPrice);
+            sql += " price <= :maxPrice";
         }
         log.info("sql={}", sql);
 
-        return jdbcTemplate.query(sql, itemRowMapper(), param.toArray());
+        return jdbcTemplate.query(sql, param, itemRowMapper());
     }
 
     private RowMapper<Item> itemRowMapper() {
-        return ((rs, rowNum) -> {
-            Item item = new Item();
-            item.setId(rs.getLong("id"));
-            item.setItemName(rs.getString("item_name"));
-            item.setPrice(rs.getInt("price"));
-            item.setQuantity(rs.getInt("quantity"));
-            return item;
-        });
+        return BeanPropertyRowMapper.newInstance(Item.class);
     }
 }
