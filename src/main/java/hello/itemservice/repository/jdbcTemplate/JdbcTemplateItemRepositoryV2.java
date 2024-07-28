@@ -9,6 +9,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -47,12 +48,14 @@ public class JdbcTemplateItemRepositoryV2 implements ItemRepository {
 
     @Override
     public void update(Long itemId, ItemUpdateDto updateParam) {
-        String sql = "update item set item_name=?, price=?, quantity=? where id=?";
-        jdbcTemplate.update(sql,
-                updateParam.getItemName(),
-                updateParam.getPrice(),
-                updateParam.getQuantity(),
-                itemId);
+        String sql = "update item set item_name=:itemName, price=:price, quantity=:quantity where id=:id";
+        MapSqlParameterSource param = new MapSqlParameterSource()
+                .addValue("itemName", updateParam.getItemName())
+                .addValue("price", updateParam.getPrice())
+                .addValue("quantity", updateParam.getQuantity())
+                .addValue("id", itemId);
+
+        jdbcTemplate.update(sql, param);
     }
 
     @Override
