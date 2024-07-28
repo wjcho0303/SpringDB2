@@ -19,6 +19,7 @@ import javax.sql.DataSource;
 import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -60,9 +61,10 @@ public class JdbcTemplateItemRepositoryV2 implements ItemRepository {
 
     @Override
     public Optional<Item> findById(Long id) {
-        String sql = "select id, item_name, price, quantity from item where id = ?";
+        String sql = "select id, item_name, price, quantity from item where id = :id";
         try {
-            Item item = jdbcTemplate.queryForObject(sql, itemRowMapper(), id);
+            Map<String, Object> param = Map.of("id", id);
+            Item item = jdbcTemplate.queryForObject(sql, param, itemRowMapper());
             return Optional.of(item);
         } catch (EmptyResultDataAccessException e) {
             return Optional.empty();
