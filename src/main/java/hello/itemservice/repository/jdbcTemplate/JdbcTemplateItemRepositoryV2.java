@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -33,17 +34,11 @@ public class JdbcTemplateItemRepositoryV2 implements ItemRepository {
 
     @Override
     public Item save(Item item) {
-        String sql = "insert into item(item_name, price, quantity) values (?,?,?)";
+        String sql = "insert into item(item_name, price, quantity) values (:itemName,:price, :quantity)";
+        BeanPropertySqlParameterSource param = new BeanPropertySqlParameterSource(item);
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        jdbcTemplate.update(connection -> {
-            // 자동 증가 키
-            PreparedStatement ps = connection.prepareStatement(sql, new String[]{"id"});
-            ps.setString(1, item.getItemName());
-            ps.setInt(2, item.getPrice());
-            ps.setInt(3, item.getQuantity());
-            return ps;
-        }, keyHolder);
 
+        jdbcTemplate.update(sql, param, keyHolder);
         long key = keyHolder.getKey().longValue();
         item.setId(key);
 
