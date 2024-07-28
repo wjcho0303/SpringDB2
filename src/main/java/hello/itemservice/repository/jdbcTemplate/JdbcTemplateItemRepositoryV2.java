@@ -25,6 +25,13 @@ import java.util.Optional;
 
 /**
  * NamedParameterJdbcTemplate
+ * SqlParameterSource
+ *   - BeanPropertySqlParameterSource
+ *   - MapSqlParameterSource
+ *
+ *  Map
+ *
+ *  BeanPropertyRowMapper
  */
 @Slf4j
 public class JdbcTemplateItemRepositoryV2 implements ItemRepository {
@@ -102,6 +109,6 @@ public class JdbcTemplateItemRepositoryV2 implements ItemRepository {
     }
 
     private RowMapper<Item> itemRowMapper() {
-        return BeanPropertyRowMapper.newInstance(Item.class);
+        return BeanPropertyRowMapper.newInstance(Item.class);   // camel 변환 지원
     }
 }
