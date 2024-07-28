@@ -30,6 +30,7 @@ class ItemRepositoryTest {
 
     @BeforeEach
     void beforeEach() {
+        // 트랜잭션 시작
         status = transactionManager.getTransaction(new DefaultTransactionDefinition());
     }
 
@@ -39,6 +40,9 @@ class ItemRepositoryTest {
         if (itemRepository instanceof MemoryItemRepository) {
             ((MemoryItemRepository) itemRepository).clearStore();
         }
+
+        // 트랜잭션 롤백
+        transactionManager.rollback(status);
     }
 
     @Test
