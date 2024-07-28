@@ -11,6 +11,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.util.StringUtils;
@@ -21,22 +22,20 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * NamedParameterJdbcTemplate
- * SqlParameterSource
- *   - BeanPropertySqlParameterSource
- *   - MapSqlParameterSource
- *
- *  Map
- *
- *  BeanPropertyRowMapper
+ * SimpleJdbcInsert
  */
 @Slf4j
 public class JdbcTemplateItemRepositoryV3 implements ItemRepository {
 
 //    private final JdbcTemplate jdbcTemplate;
     private final NamedParameterJdbcTemplate jdbcTemplate;
+    private final SimpleJdbcInsert jdbcInsert;
     public JdbcTemplateItemRepositoryV3(DataSource dataSource) {
         this.jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+        this.jdbcInsert = new SimpleJdbcInsert(dataSource)
+                .withTableName("item")
+                .usingGeneratedKeyColumns("id");
+//                .usingColumns("item_name", "price", "quantity") // 생략 가능
     }
 
     @Override
