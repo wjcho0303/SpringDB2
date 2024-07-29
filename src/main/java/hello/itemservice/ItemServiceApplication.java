@@ -31,17 +31,4 @@ public class ItemServiceApplication {
 		return new TestDataInit(itemRepository);
 	}
 
-	// 테스트를 수행하기 위해 프로필이 test인 경우에만 주입할 DataSource를 빈으로 등록
-	@Bean
-	@Profile("test")
-	public DataSource dataSource() {
-		log.info("메모리 데이터베이스 초기화");
-		DriverManagerDataSource dataSource = new DriverManagerDataSource();
-		dataSource.setDriverClassName("org.h2.Driver");
-		dataSource.setUrl("jdbc:h2:mem:db;DB_CLOSE_DELAY=-1");
-		dataSource.setUsername("sa");
-		dataSource.setPassword("");
-		return dataSource;
-	}
-
 }
