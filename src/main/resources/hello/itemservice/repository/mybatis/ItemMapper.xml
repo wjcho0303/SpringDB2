@@ -11,8 +11,8 @@
     <update id="update">
         update item
         set item_name=#{updateParam.itemName},
-        price=#{updateParam.price},
-        quantity=#{updateParam.quantity}
+            price=#{updateParam.price},
+            quantity=#{updateParam.quantity}
         where id = #{id}
     </update>
 
@@ -27,10 +27,10 @@
         from item
         <where>
             <if test="itemName != null and itemName != ''">
-                and item_name like concat('%',#{itemName},'%')
+                and item_name like concat('%',#{itemName}, '%')
             </if>
             <if test="maxPrice != null">
-                and price &lt;= #{maxPrice}
+                and price $lt;= ${maxPrice}
             </if>
         </where>
     </select>
