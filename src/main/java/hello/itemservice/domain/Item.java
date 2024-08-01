@@ -1,11 +1,15 @@
 package hello.itemservice.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Data
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 public class Item {
 
     @Id
@@ -18,9 +22,6 @@ public class Item {
     private Integer price;
 
     private Integer quantity;
-
-    public Item() {
-    }
 
     public Item(String itemName, Integer price, Integer quantity) {
         this.itemName = itemName;
