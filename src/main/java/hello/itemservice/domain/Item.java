@@ -12,7 +12,7 @@ public class Item {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "item_name", length = 50)
+    /** @Column(name = "item_name", length = 50) */
     private String itemName;
 
     private Integer price;
